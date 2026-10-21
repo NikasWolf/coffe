@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class CoffeeDialog extends StatefulWidget {
   final dynamic existingCoffee; // Передаем Coffee из базы или null
@@ -53,7 +55,26 @@ class _CoffeeDialogState extends State<CoffeeDialog> {
               _buildField('Название напитка', _nameController),
               _buildField('Цена (₽)', _priceController, isNumber: true),
               _buildField('Состав', _descController, maxLines: 3),
-              _buildField('Ссылка на картинку (URL)', _imageController),
+                            Row(
+                children: [
+                  Expanded(child: _buildField('Путь к картинке', _imageController)),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final PlatformFile? file = await FilePicker.pickFile(type: FileType.image);
+                        if (file != null && file.path != null) {
+                          _imageController.text = file.path!;
+                        }
+                     },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amber,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text('Выбрать файл'),
+                  ),
+                ],
+              ),
             ],
           ),
         ),

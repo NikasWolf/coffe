@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../database/app_database.dart'; // Берем модель из базы
+import 'dart:io';
 
 class CoffeeCard extends StatelessWidget {
   final Coffee coffee;
@@ -26,17 +27,20 @@ class CoffeeCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             // Используем Image.network для загрузки из интернета
-            child: Image.network(
-              coffee.imageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => const Center(
-                child: Icon(Icons.coffee, size: 48, color: Colors.brown),
-              ),
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-              },
-            ),
+            // Вместо старого child: Image.network(...) вставляем это:
+child: coffee.imageUrl.startsWith('http')
+    ? Image.network(
+        coffee.imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.coffee, size: 48, color: Colors.brown)),
+      )
+    : File(coffee.imageUrl).existsSync() // Проверяем, существует ли файл по пути
+        ? Image.file(
+            File(coffee.imageUrl),
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.coffee, size: 48, color: Colors.brown)),
+          )
+        : const Center(child: Icon(Icons.coffee, size: 48, color: Colors.brown)), // Заглушка, если файла нет
           ),
           const SizedBox(width: 16),
           Expanded(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io'; // <-- ОБЯЗАТЕЛЬНО для работы с файлами
 import '../database/app_database.dart';
 
 class BlogCard extends StatefulWidget {
@@ -11,13 +12,11 @@ class BlogCard extends StatefulWidget {
 }
 
 class _BlogCardState extends State<BlogCard> {
-  // Состояние: развернута ли карточка
   bool _isExpanded = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // При клике на карточку переключаем состояние
       onTap: () {
         setState(() {
           _isExpanded = !_isExpanded;
@@ -29,13 +28,12 @@ class _BlogCardState extends State<BlogCard> {
         decoration: BoxDecoration(
           color: const Color(0xFF4E342E),
           borderRadius: BorderRadius.circular(12),
-          // Добавим легкую рамку, чтобы было понятно, что на карточку можно нажать
           border: Border.all(color: _isExpanded ? Colors.amber : Colors.transparent, width: 1),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Картинка
+            // Картинка с проверкой (Файл или Сеть)
             Container(
               width: 120,
               height: 120,
@@ -43,17 +41,23 @@ class _BlogCardState extends State<BlogCard> {
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Image.network(
-                widget.post.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => const Center(
-                  child: Icon(Icons.article, size: 48, color: Colors.brown),
-                ),
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-                },
-              ),
+              child: widget.post.imageUrl.startsWith('http')
+                  ? Image.network(
+                      widget.post.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Center(
+                        child: Icon(Icons.article, size: 48, color: Colors.brown),
+                      ),
+                    )
+                  : File(widget.post.imageUrl).existsSync()
+                      ? Image.file(
+                          File(widget.post.imageUrl),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => const Center(
+                            child: Icon(Icons.article, size: 48, color: Colors.brown),
+                          ),
+                        )
+                      : const Center(child: Icon(Icons.article, size: 48, color: Colors.brown)),
             ),
             const SizedBox(width: 16),
             // Текст
@@ -73,17 +77,13 @@ class _BlogCardState extends State<BlogCard> {
                     style: const TextStyle(color: Colors.amber, fontSize: 12),
                   ),
                   const SizedBox(height: 8),
-                  // Текст новости
                   Text(
                     widget.post.shortDescription,
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
-                    // Если развернуто (_isExpanded == true), maxLines = null (без ограничений)
-                    // Если свернуто, maxLines = 3
                     maxLines: _isExpanded ? null : 3,
                     overflow: _isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  // Маленькая подсказка внизу карточки
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

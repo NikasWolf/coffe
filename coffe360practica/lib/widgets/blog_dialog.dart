@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 
 class BlogDialog extends StatefulWidget {
   final dynamic existingPost;
@@ -58,7 +59,26 @@ class _BlogDialogState extends State<BlogDialog> {
               _buildField('Заголовок', _titleController),
               _buildField('Дата', _dateController),
               _buildField('Текст новости', _descController, maxLines: 5),
-              _buildField('Ссылка на картинку (URL)', _imageController),
+                            Row(
+                children: [
+                  Expanded(child: _buildField('Путь к картинке', _imageController)),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final PlatformFile? file = await FilePicker.pickFile(type: FileType.image);
+if (file != null && file.path != null) {
+  _imageController.text = file.path!;
+}
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.amber,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text('Выбрать файл'),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
