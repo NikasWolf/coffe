@@ -15,6 +15,14 @@ class BlogViewModel extends ChangeNotifier {
 
   List<BlogPost> get posts => _posts;
 
+  Future<void> addPost(BlogPostsCompanion post) async {
+    await _repository.addPost(post);
+  }
+
+  Future<void> updatePost(BlogPost post) async {
+    await _repository.updatePost(post);
+  }
+
   Future<void> deletePost(int id) async {
     await _repository.deletePost(id);
   }

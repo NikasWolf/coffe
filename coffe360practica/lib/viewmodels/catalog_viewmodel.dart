@@ -10,7 +10,7 @@ class CatalogViewModel extends ChangeNotifier {
     // Подписываемся на поток данных из БД
     _repository.watchAllCoffees().listen((coffeeList) {
       _coffees = coffeeList;
-      notifyListeners(); 
+      notifyListeners();
     });
   }
 
@@ -18,6 +18,10 @@ class CatalogViewModel extends ChangeNotifier {
 
   Future<void> addCoffee(CoffeesCompanion coffee) async {
     await _repository.addCoffee(coffee);
+  }
+
+  Future<void> updateCoffee(Coffee coffee) async {
+    await _repository.updateCoffee(coffee);
   }
 
   Future<void> deleteCoffee(int id) async {

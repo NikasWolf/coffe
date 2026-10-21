@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/catalog_viewmodel.dart';
 import '../viewmodels/blog_viewmodel.dart';
+import '../database/app_database.dart';
+import '../widgets/coffee_dialog.dart';
+import '../widgets/blog_dialog.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -54,7 +57,24 @@ class _AdminCatalogTab extends StatelessWidget {
             children: [
               const Text('Товары в каталоге', style: TextStyle(color: Colors.white, fontSize: 20)),
               ElevatedButton.icon(
-                onPressed: () { /* TODO: Добавить кофе */ },
+                onPressed: () async {
+                  // Открываем диалог для ДОБАВЛЕНИЯ (передаем null)
+                  final result = await showDialog<Map<String, dynamic>>(
+                    context: context,
+                    builder: (context) => const CoffeeDialog(),
+                  );
+                  if (result != null && context.mounted) {
+                    // Сохраняем в БД через ViewModel
+                    context.read<CatalogViewModel>().addCoffee(
+                      CoffeesCompanion.insert(
+                        name: result['name'],
+                        description: result['description'],
+                        price: result['price'],
+                        imageUrl: result['imageUrl'],
+                      ),
+                    );
+                  }
+                },
                 icon: const Icon(Icons.add),
                 label: const Text('Добавить'),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
@@ -63,7 +83,6 @@ class _AdminCatalogTab extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Expanded(
-            // Читаем данные из CatalogViewModel
             child: Consumer<CatalogViewModel>(
               builder: (context, catalogVM, child) {
                 return ListView.builder(
@@ -81,11 +100,28 @@ class _AdminCatalogTab extends StatelessWidget {
                           children: [
                             IconButton(
                               icon: const Icon(Icons.edit, color: Colors.blueAccent), 
-                              onPressed: () { /* TODO: Редактировать */ }
+                              onPressed: () async {
+                                // Открываем диалог для РЕДАКТИРОВАНИЯ (передаем текущий объект)
+                                final result = await showDialog<Map<String, dynamic>>(
+                                  context: context,
+                                  builder: (context) => CoffeeDialog(existingCoffee: coffee),
+                                );
+                                if (result != null && context.mounted) {
+                                  context.read<CatalogViewModel>().updateCoffee(
+                                    Coffee(
+                                      id: coffee.id, // Сохраняем старый ID
+                                      name: result['name'],
+                                      description: result['description'],
+                                      price: result['price'],
+                                      imageUrl: result['imageUrl'],
+                                    ),
+                                  );
+                                }
+                              }
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.redAccent), 
-                              onPressed: () => catalogVM.deleteCoffee(coffee.id), // Рабочее удаление!
+                              onPressed: () => catalogVM.deleteCoffee(coffee.id),
                             ),
                           ],
                         ),
@@ -116,7 +152,23 @@ class _AdminBlogTab extends StatelessWidget {
             children: [
               const Text('Новости блога', style: TextStyle(color: Colors.white, fontSize: 20)),
               ElevatedButton.icon(
-                onPressed: () { /* TODO: Добавить новость */ },
+                onPressed: () async {
+                  // Открываем диалог для ДОБАВЛЕНИЯ
+                  final result = await showDialog<Map<String, dynamic>>(
+                    context: context,
+                    builder: (context) => const BlogDialog(),
+                  );
+                  if (result != null && context.mounted) {
+                    context.read<BlogViewModel>().addPost(
+                      BlogPostsCompanion.insert(
+                        title: result['title'],
+                        date: result['date'],
+                        shortDescription: result['shortDescription'],
+                        imageUrl: result['imageUrl'],
+                      ),
+                    );
+                  }
+                },
                 icon: const Icon(Icons.add),
                 label: const Text('Написать'),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
@@ -125,7 +177,6 @@ class _AdminBlogTab extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Expanded(
-            // Читаем данные из BlogViewModel
             child: Consumer<BlogViewModel>(
               builder: (context, blogVM, child) {
                 return ListView.builder(
@@ -143,7 +194,24 @@ class _AdminBlogTab extends StatelessWidget {
                           children: [
                             IconButton(
                               icon: const Icon(Icons.edit, color: Colors.blueAccent), 
-                              onPressed: () { /* TODO: Редактировать */ }
+                              onPressed: () async {
+                                // Открываем диалог для РЕДАКТИРОВАНИЯ
+                                final result = await showDialog<Map<String, dynamic>>(
+                                  context: context,
+                                  builder: (context) => BlogDialog(existingPost: post),
+                                );
+                                if (result != null && context.mounted) {
+                                  context.read<BlogViewModel>().updatePost(
+                                    BlogPost(
+                                      id: post.id,
+                                      title: result['title'],
+                                      date: result['date'],
+                                      shortDescription: result['shortDescription'],
+                                      imageUrl: result['imageUrl'],
+                                    ),
+                                  );
+                                }
+                              }
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.redAccent), 
