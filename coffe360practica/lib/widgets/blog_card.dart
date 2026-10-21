@@ -105,7 +105,7 @@ class _BlogCardState extends State<BlogCard> {
                   ),
                 ],
               ),
-            ),
+            ),//
           ],
         ),
       ),
