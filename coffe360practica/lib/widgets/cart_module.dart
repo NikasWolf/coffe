@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/cart_viewmodel.dart';
+import 'checkout_dialog.dart';
 
 class CartModule extends StatelessWidget {
   const CartModule({super.key});
@@ -43,9 +44,13 @@ class CartModule extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: cart.cartItems.isEmpty ? null : () {
-                    // TODO: Логика оформления заказа и генерации чека
-                  },
+                  // А в кнопке замени onPressed:
+onPressed: cart.cartItems.isEmpty ? null : () {
+  showDialog(
+    context: context,
+    builder: (context) => const CheckoutDialog(),
+  );
+},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,
                     foregroundColor: Colors.black,

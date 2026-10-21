@@ -19,4 +19,9 @@ class CartViewModel extends ChangeNotifier {
     _cartItems.remove(coffee);
     notifyListeners();
   }
+
+  void clearCart() {
+    _cartItems.clear();
+    notifyListeners();
+  }
 }
