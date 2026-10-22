@@ -17,3 +17,20 @@ class BlogPosts extends Table {
   TextColumn get shortDescription => text()();
   TextColumn get imageUrl => text()();
 }
+
+//Таблица для аккаунтов
+class Users extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get login => text().withLength(min: 3, max: 50)();
+  TextColumn get password => text()();
+  TextColumn get name => text().withLength(min: 1, max: 100)();
+  BoolColumn get isAdmin => boolean().withDefault(const Constant(false))();
+  TextColumn get address => text().nullable()();
+}
+
+class Orders extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  RealColumn get totalAmount => real()();
+  TextColumn get date => text()(); // Будем хранить дату в виде строки "YYYY-MM-DD"
+}
+

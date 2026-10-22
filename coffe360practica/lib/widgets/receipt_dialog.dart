@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../database/app_database.dart';
 
 class ReceiptDialog extends StatelessWidget {
-  final List<Coffee> items;
+  // МЕНЯЕМ ТИП С List НА Map
+  final Map<Coffee, int> items; 
   final double total;
   final String address;
 
@@ -52,14 +53,22 @@ class ReceiptDialog extends StatelessWidget {
               const Text('----------------------------------------', style: TextStyle(color: Colors.black54, letterSpacing: -1)),
               const SizedBox(height: 8),
               
-              // Список товаров
-              ...items.map((item) => Padding(
+              // ОБНОВЛЕННЫЙ СПИСОК ТОВАРОВ (через .entries)
+              ...items.entries.map((entry) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: Text(item.name, style: const TextStyle(fontSize: 14, color: Colors.black))),
-                    Text('${item.price.toInt()} ₽', style: const TextStyle(fontSize: 14, color: Colors.black)),
+                    Expanded(
+                      child: Text(
+                        '${entry.key.name} x${entry.value}', // Выводим название и количество
+                        style: const TextStyle(fontSize: 14, color: Colors.black),
+                      ),
+                    ),
+                    Text(
+                      '${(entry.key.price * entry.value).toInt()} ₽', // Считаем общую цену за этот товар
+                      style: const TextStyle(fontSize: 14, color: Colors.black),
+                    ),
                   ],
                 ),
               )),

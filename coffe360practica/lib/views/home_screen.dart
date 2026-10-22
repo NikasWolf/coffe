@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/app_module.dart';
 import '../viewmodels/layout_viewmodel.dart';
+import '../viewmodels/auth_viewmodel.dart'; // <-- ДОБАВИЛИ ИМПОРТ
 import '../widgets/blog_module.dart';
 import '../widgets/catalog_module.dart';
 import '../widgets/cart_module.dart';
-import '../widgets/account_dialog.dart'; // Импорт диалога
-import 'admin_screen.dart'; // Импорт экрана админа
+import '../widgets/account_dialog.dart'; 
+import 'admin_screen.dart'; 
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -72,28 +73,46 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
 
-                // КНОПКИ АККАУНТА И АДМИНА (Справа)
-                const SizedBox(width: 16),
-                // Кнопка аккаунта (открывает диалоговое окно)
-                IconButton(
-                  icon: const Icon(Icons.account_circle, color: Colors.white70, size: 28),
-                  tooltip: 'Аккаунт',
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => const AccountDialog(),
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-                // Кнопка перехода в админку (меняет экран)
-                IconButton(
-                  icon: const Icon(Icons.admin_panel_settings, color: Colors.amber, size: 28),
-                  tooltip: 'Панель администратора',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const AdminScreen()),
+                // КНОПКИ АККАУНТА И АДМИНА (Справа) - ОБЕРНУТЫ В CONSUMER
+                Consumer<AuthViewModel>(
+                  builder: (context, auth, child) {
+                    return Row(
+                      children: [
+                        // Имя текущего пользователя
+                        if (auth.currentUser != null)
+                          Text(
+                            auth.currentUser!.name, 
+                            style: const TextStyle(color: Colors.white70, fontSize: 14),
+                          ),
+                        const SizedBox(width: 16),
+
+                        // Кнопка аккаунта (открывает диалоговое окно, доступна всем)
+                        IconButton(
+                          icon: const Icon(Icons.account_circle, color: Colors.white70, size: 28),
+                          tooltip: 'Аккаунт',
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => const AccountDialog(),
+                            );
+                          },
+                        ),
+                        
+                        // Кнопка перехода в админку (ТОЛЬКО ДЛЯ АДМИНА)
+                        if (auth.isAdmin) ...[
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.admin_panel_settings, color: Colors.amber, size: 28),
+                            tooltip: 'Панель администратора',
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const AdminScreen()),
+                              );
+                            },
+                          ),
+                        ],
+                      ],
                     );
                   },
                 ),

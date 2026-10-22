@@ -5,6 +5,8 @@ import '../viewmodels/blog_viewmodel.dart';
 import '../database/app_database.dart';
 import '../widgets/coffee_dialog.dart';
 import '../widgets/blog_dialog.dart';
+import '../repositories/order_repository.dart';
+import 'stats_screen.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -22,6 +24,23 @@ class AdminScreen extends StatelessWidget {
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.analytics, color: Colors.amber),
+              tooltip: 'Статистика',
+              onPressed: () async {
+                // Получаем заказы и открываем экран
+                final orderRepo = context.read<OrderRepository>();
+                final orders = await orderRepo.getAllOrders();
+                if (context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => StatsScreen(orders: orders)),
+                  );
+                }
+              },
+            ),
+          ],
           bottom: const TabBar(
             indicatorColor: Colors.amber,
             labelColor: Colors.amber,

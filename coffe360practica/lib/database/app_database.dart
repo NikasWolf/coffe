@@ -4,7 +4,7 @@ import 'tables.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Coffees, BlogPosts])
+@DriftDatabase(tables: [Coffees, BlogPosts, Users, Orders]) // <-- Добавили Orders
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -12,7 +12,8 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => 1;
 
   // Метод для заполнения БД начальными данными
-      Future<void> seedDatabase() async {
+  Future<void> seedDatabase() async {
+    // 1. Заполняем каталог кофе
     final coffeeCount = await coffees.count().getSingle();
     if (coffeeCount == 0) {
       await batch((batch) {
@@ -28,6 +29,7 @@ class AppDatabase extends _$AppDatabase {
       });
     }
 
+    // 2. Заполняем блог
     final blogCount = await blogPosts.count().getSingle();
     if (blogCount == 0) {
       await batch((batch) {
@@ -42,6 +44,39 @@ class AppDatabase extends _$AppDatabase {
           BlogPostsCompanion.insert(title: 'Секреты идеальной пенки', date: '18 августа 2023', shortDescription: 'Рассказываем, как взбить молоко до состояния облака.', imageUrl: 'https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?q=80&w=200&auto=format&fit=crop'),
           BlogPostsCompanion.insert(title: 'Наш новый десерт: Тирамису', date: '10 августа 2023', shortDescription: 'Идеально сочетается с Эспрессо. Успейте попробовать!', imageUrl: 'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?q=80&w=200&auto=format&fit=crop'),
           BlogPostsCompanion.insert(title: 'Итоги месяца: 1000 чашек', date: '01 августа 2023', shortDescription: 'Мы продали 1000 чашек кофе за месяц. Спасибо, что выбираете нас!', imageUrl: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=200&auto=format&fit=crop'),
+        ]);
+      });
+    }
+
+    // 3. Создаем дефолтного админа
+    final userCount = await users.count().getSingle();
+    if (userCount == 0) {
+      await into(users).insert(UsersCompanion.insert(
+        login: 'admin',
+        password: 'admin',
+        name: 'Главный Администратор',
+        isAdmin: const Value(true),
+      ));
+    }
+
+    // 4. Генерируем тестовые заказы для статистики (если их нет)
+    final orderCount = await orders.count().getSingle();
+    if (orderCount == 0) {
+      final today = DateTime.now();
+      // Форматируем дату как YYYY-MM-DD
+      String formatDate(int daysAgo) {
+        final d = today.subtract(Duration(days: daysAgo));
+        return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+      }
+
+      await batch((batch) {
+        batch.insertAll(orders, [
+          OrdersCompanion.insert(totalAmount: 450.0, date: formatDate(0)),
+          OrdersCompanion.insert(totalAmount: 720.0, date: formatDate(1)),
+          OrdersCompanion.insert(totalAmount: 150.0, date: formatDate(1)),
+          OrdersCompanion.insert(totalAmount: 1200.0, date: formatDate(2)),
+          OrdersCompanion.insert(totalAmount: 850.0, date: formatDate(3)),
+          OrdersCompanion.insert(totalAmount: 300.0, date: formatDate(4)),
         ]);
       });
     }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../database/app_database.dart'; // Берем модель из базы
 import 'dart:io';
+import '../viewmodels/cart_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class CoffeeCard extends StatelessWidget {
   final Coffee coffee;
@@ -59,20 +61,54 @@ child: coffee.imageUrl.startsWith('http')
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),
-                Row(
+                                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       '${coffee.price.toInt()} ₽',
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber),
                     ),
-                    ElevatedButton(
-                      onPressed: onAdd,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        foregroundColor: Colors.black,
-                      ),
-                      child: const Text('В корзину'),
+                    // Слушаем изменения корзины
+                    Consumer<CartViewModel>(
+                      builder: (context, cart, child) {
+                        final quantity = cart.getQuantity(coffee);
+                        if (quantity == 0) {
+                          // Если товара нет в корзине, показываем кнопку добавления
+                          return ElevatedButton(
+                            onPressed: onAdd,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.amber,
+                              foregroundColor: Colors.black,
+                            ),
+                            child: const Text('В корзину'),
+                          );
+                        } else {
+                          // Если товар есть, показываем счетчик
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove, color: Colors.amber, size: 20),
+                                  onPressed: () => cart.removeOneFromCart(coffee),
+                                ),
+                                Text(
+                                  '$quantity',
+                                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.add, color: Colors.amber, size: 20),
+                                  onPressed: () => cart.addToCart(coffee),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),

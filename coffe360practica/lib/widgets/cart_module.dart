@@ -21,13 +21,17 @@ class CartModule extends StatelessWidget {
               Expanded(
                 child: cart.cartItems.isEmpty
                     ? const Center(child: Text('Корзина пуста', style: TextStyle(color: Colors.white54)))
-                    : ListView.builder(
+                                        : ListView.builder(
                         itemCount: cart.cartItems.length,
                         itemBuilder: (context, index) {
-                          final item = cart.cartItems[index];
+                          // Получаем пару ключ-значение из Map
+                          final entry = cart.cartItems.entries.elementAt(index);
+                          final coffee = entry.key;
+                          final quantity = entry.value;
+
                           return ListTile(
-                            title: Text(item.name, style: const TextStyle(color: Colors.white)),
-                            trailing: Text('${item.price.toInt()} ₽', style: const TextStyle(color: Colors.amber)),
+                            title: Text('${coffee.name} x$quantity', style: const TextStyle(color: Colors.white)),
+                            trailing: Text('${(coffee.price * quantity).toInt()} ₽', style: const TextStyle(color: Colors.amber)),
                           );
                         },
                       ),
@@ -45,12 +49,12 @@ class CartModule extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   // А в кнопке замени onPressed:
-onPressed: cart.cartItems.isEmpty ? null : () {
-  showDialog(
-    context: context,
-    builder: (context) => const CheckoutDialog(),
-  );
-},
+                  onPressed: cart.cartItems.isEmpty ? null : () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const CheckoutDialog(),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,
                     foregroundColor: Colors.black,
