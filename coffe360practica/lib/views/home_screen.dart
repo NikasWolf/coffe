@@ -26,7 +26,6 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF2D1B14),
       body: Column(
         children: [
-          // ВЕРХНЯЯ ПАНЕЛЬ ПРИЛОЖЕНИЯ
           Container(
             height: 60,
             color: const Color(0xFF1A110D),
@@ -41,7 +40,6 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 32),
                 
-                // КНОПКИ ВКЛЮЧЕНИЯ/ВЫКЛЮЧЕНИЯ МОДУЛЕЙ
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -73,20 +71,17 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
 
-                // КНОПКИ АККАУНТА И АДМИНА (Справа) - ОБЕРНУТЫ В CONSUMER
+
                 Consumer<AuthViewModel>(
                   builder: (context, auth, child) {
                     return Row(
                       children: [
-                        // Имя текущего пользователя
                         if (auth.currentUser != null)
                           Text(
                             auth.currentUser!.name, 
                             style: const TextStyle(color: Colors.white70, fontSize: 14),
                           ),
                         const SizedBox(width: 16),
-
-                        // Кнопка аккаунта (открывает диалоговое окно, доступна всем)
                         IconButton(
                           icon: const Icon(Icons.account_circle, color: Colors.white70, size: 28),
                           tooltip: 'Аккаунт',
@@ -98,7 +93,6 @@ class HomeScreen extends StatelessWidget {
                           },
                         ),
                         
-                        // Кнопка перехода в админку (ТОЛЬКО ДЛЯ АДМИНА)
                         if (auth.isAdmin) ...[
                           const SizedBox(width: 8),
                           IconButton(
@@ -120,7 +114,6 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
 
-          // ОБЛАСТЬ МОДУЛЕЙ (без изменений)
           Expanded(
             child: Consumer<LayoutViewModel>(
               builder: (context, layoutVM, child) {

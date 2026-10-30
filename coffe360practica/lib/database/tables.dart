@@ -31,6 +31,6 @@ class Users extends Table {
 class Orders extends Table {
   IntColumn get id => integer().autoIncrement()();
   RealColumn get totalAmount => real()();
-  TextColumn get date => text()(); // Будем хранить дату в виде строки "YYYY-MM-DD"
+  TextColumn get date => text()(); //  "YYYY-MM-DD"
 }
 

@@ -6,7 +6,7 @@ class CoffeeRepository {
 
   CoffeeRepository(this._db);
 
-  // Получить все кофе (в виде реактивного потока)
+  // Получить все кофе 
   Stream<List<Coffee>> watchAllCoffees() {
     return _db.select(_db.coffees).watch();
   }

@@ -59,7 +59,7 @@ class AppDatabase extends _$AppDatabase {
       ));
     }
 
-    // 4. Генерируем тестовые заказы для статистики (если их нет)
+    // 4. Генерируем тестовые заказы для статистики 
     final orderCount = await orders.count().getSingle();
     if (orderCount == 0) {
       final today = DateTime.now();

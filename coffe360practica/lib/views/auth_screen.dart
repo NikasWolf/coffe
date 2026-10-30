@@ -19,7 +19,6 @@ class _AuthScreenState extends State<AuthScreen> {
     @override
     void initState() {
       super.initState();
-      // ВОТ ЭТИ ТРИ СТРОКИ СЛЕДЯТ ЗА ТЕКСТОМ:
       _loginController.addListener(_clearError);
       _passwordController.addListener(_clearError);
       _nameController.addListener(_clearError);
@@ -33,7 +32,6 @@ class _AuthScreenState extends State<AuthScreen> {
       super.dispose();
     }
 
-    // А ЭТОТ МЕТОД СТИРАЕТ ОШИБКУ, КОГДА ТЫ ПЕЧАТАЕШЬ
     void _clearError() {
       if (_errorMessage != null) {
         setState(() {
@@ -43,7 +41,6 @@ class _AuthScreenState extends State<AuthScreen> {
     }
 
     void _submit() async {
-    // 1. Очищаем старую ошибку при КАЖДОМ нажатии на кнопку
     setState(() {
       _errorMessage = null;
     });
@@ -52,7 +49,6 @@ class _AuthScreenState extends State<AuthScreen> {
     final login = _loginController.text.trim();
     final password = _passwordController.text.trim();
 
-    // Проверка на пустые поля
     if (login.isEmpty || password.isEmpty) {
       setState(() => _errorMessage = 'Заполните все поля');
       return;
@@ -69,7 +65,6 @@ class _AuthScreenState extends State<AuthScreen> {
       error = await authVM.login(login, password);
     }
 
-    // 2. Если после запроса появилась ошибка — показываем её
     if (error != null && mounted) {
       setState(() => _errorMessage = error);
     }

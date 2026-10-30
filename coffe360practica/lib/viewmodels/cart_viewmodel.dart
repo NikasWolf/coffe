@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../database/app_database.dart';
 
 class CartViewModel extends ChangeNotifier {
-  // Теперь используем Map: Кофе -> Количество
+
   final Map<Coffee, int> _cartItems = {};
 
   Map<Coffee, int> get cartItems => _cartItems;

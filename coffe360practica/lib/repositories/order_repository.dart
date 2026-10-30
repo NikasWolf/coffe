@@ -13,7 +13,7 @@ class OrderRepository {
     );
   }
 
-  // Получить все заказы (для подсчета статистики)
+  // Получить все заказы 
   Future<List<Order>> getAllOrders() {
     return _db.select(_db.orders).get();
   }

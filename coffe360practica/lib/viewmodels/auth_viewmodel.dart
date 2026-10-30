@@ -19,9 +19,9 @@ class AuthViewModel extends ChangeNotifier {
     if (user != null) {
       _currentUser = user;
       notifyListeners();
-      return null; // Успех, ошибки нет
+      return null; 
     }
-    return 'Неверный логин или пароль'; // Ошибка
+    return 'Неверный логин или пароль'; 
   }
 
   
@@ -40,12 +40,11 @@ class AuthViewModel extends ChangeNotifier {
         isAdmin: const Value(false),
       );
       
-      // Создаем пользователя и получаем его обратно
       final createdUser = await _repository.register(newUser);
       
-      // МАГИЯ: Сразу делаем его текущим пользователем
+
       _currentUser = createdUser;
-      notifyListeners(); // Сообщаем приложению, что мы вошли
+      notifyListeners(); 
 
       return null; // Успех
     } catch (e) {

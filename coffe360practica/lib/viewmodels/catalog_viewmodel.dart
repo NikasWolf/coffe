@@ -7,7 +7,6 @@ class CatalogViewModel extends ChangeNotifier {
   List<Coffee> _coffees = [];
 
   CatalogViewModel(this._repository) {
-    // Подписываемся на поток данных из БД
     _repository.watchAllCoffees().listen((coffeeList) {
       _coffees = coffeeList;
       notifyListeners();

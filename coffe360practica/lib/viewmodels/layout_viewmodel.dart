@@ -22,7 +22,6 @@ class LayoutViewModel extends ChangeNotifier {
   }
 
   void reorderModules(int oldIndex, int newIndex) {
-    // Безопасная вставка: индекс не может выходить за пределы длины списка
     final item = _activeModules.removeAt(oldIndex);
     final safeIndex = newIndex.clamp(0, _activeModules.length);
     _activeModules.insert(safeIndex, item);

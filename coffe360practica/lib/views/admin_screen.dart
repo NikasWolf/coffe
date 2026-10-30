@@ -29,7 +29,6 @@ class AdminScreen extends StatelessWidget {
               icon: const Icon(Icons.analytics, color: Colors.amber),
               tooltip: 'Статистика',
               onPressed: () async {
-                // Получаем заказы и открываем экран
                 final orderRepo = context.read<OrderRepository>();
                 final orders = await orderRepo.getAllOrders();
                 if (context.mounted) {
